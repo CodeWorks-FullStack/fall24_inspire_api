@@ -1,7 +1,18 @@
 import { dbContext } from "../db/DbContext.js"
-import { Forbidden } from "../utils/Errors.js"
+import { BadRequest, Forbidden } from "../utils/Errors.js"
 
 class TodosService {
+  async deleteTodo(todoId, userId) {
+    const todoToDelete = await dbContext.Todos.findById(todoId)
+
+    if (todoToDelete.creatorId != userId) {
+      throw new Forbidden("Not your todo to delete, pal")
+    }
+
+    await todoToDelete.deleteOne()
+
+    return `${todoToDelete.description} has been deleted!`
+  }
   async updateTodo(todoId, todoData) {
     const todoToUpdate = await dbContext.Todos.findById(todoId)
 
@@ -18,9 +29,15 @@ class TodosService {
   }
   async getTodoById(todoId, userId) {
     const todo = await dbContext.Todos.findById(todoId)
+
+    if (todo == null) {
+      throw new BadRequest(`Invalid todo id: ${todoId}`)
+    }
+
     if (todo.creatorId != userId) {
       throw new Forbidden("You cannot access another user's todo")
     }
+
     return todo
   }
   async createTodo(todoData) {
