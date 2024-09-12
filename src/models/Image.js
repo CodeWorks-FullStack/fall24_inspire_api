@@ -10,3 +10,10 @@ export const ImageSchema = new Schema(
     toJSON: { virtuals: true }
   }
 )
+
+ImageSchema.virtual('author', {
+  localField: 'authorId',
+  ref: 'Account',
+  foreignField: '_id',
+  justOne: true
+})
