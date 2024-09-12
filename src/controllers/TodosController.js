@@ -10,6 +10,8 @@ export class TodosController extends BaseController {
       .use(Auth0Provider.getAuthorizedUserInfo)
       .post('', this.createTodo)
       .get('', this.getMyTodos)
+      .get('/:todoId', this.getTodoById)
+      .put('/:todoId', this.updateTodo)
   }
 
   async createTodo(request, response, next) {
@@ -29,6 +31,29 @@ export class TodosController extends BaseController {
       const user = request.userInfo
       const todos = await todosService.getMyTodos(user.id)
       response.send(todos)
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  async getTodoById(request, response, next) {
+    try {
+      // NOTE this should match whatever we named our parameter on the router .get('/:todoId')
+      const todoId = request.params.todoId
+      const userInfo = request.userInfo
+      const todo = await todosService.getTodoById(todoId, userInfo.id)
+      response.send(todo)
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  async updateTodo(request, response, next) {
+    try {
+      const todoId = request.params.todoId
+      const todoData = request.body
+      const todo = await todosService.updateTodo(todoId, todoData)
+      response.send(todo)
     } catch (error) {
       next(error)
     }
