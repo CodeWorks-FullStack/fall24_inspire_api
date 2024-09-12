@@ -13,8 +13,12 @@ class TodosService {
 
     return `${todoToDelete.description} has been deleted!`
   }
-  async updateTodo(todoId, todoData) {
+  async updateTodo(todoId, userId, todoData) {
     const todoToUpdate = await dbContext.Todos.findById(todoId)
+
+    if (todoToUpdate.creatorId != userId) {
+      throw new Forbidden("Not your todo to update, bud")
+    }
 
     // todoToUpdate.completed = todoData.completed == undefined ? todoToUpdate.completed : todoData.completed
     // todoToUpdate.description = todoData.description == undefined ? todoToUpdate.description : todoData.description
