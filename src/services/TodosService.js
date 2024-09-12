@@ -3,22 +3,22 @@ import { BadRequest, Forbidden } from "../utils/Errors.js"
 
 class TodosService {
   async deleteTodo(todoId, userId) {
-    const todoToDelete = await dbContext.Todos.findById(todoId)
+    const todoToDelete = await this.getTodoById(todoId, userId)
 
-    if (todoToDelete.creatorId != userId) {
-      throw new Forbidden("Not your todo to delete, pal")
-    }
+    // if (todoToDelete.creatorId != userId) {
+    //   throw new Forbidden("Not your todo to delete, pal")
+    // }
 
     await todoToDelete.deleteOne()
 
     return `${todoToDelete.description} has been deleted!`
   }
   async updateTodo(todoId, userId, todoData) {
-    const todoToUpdate = await dbContext.Todos.findById(todoId)
+    const todoToUpdate = await this.getTodoById(todoId, userId)
 
-    if (todoToUpdate.creatorId != userId) {
-      throw new Forbidden("Not your todo to update, bud")
-    }
+    // if (todoToUpdate.creatorId != userId) {
+    //   throw new Forbidden("Not your todo to update, bud")
+    // }
 
     // todoToUpdate.completed = todoData.completed == undefined ? todoToUpdate.completed : todoData.completed
     // todoToUpdate.description = todoData.description == undefined ? todoToUpdate.description : todoData.description
@@ -38,8 +38,9 @@ class TodosService {
       throw new BadRequest(`Invalid todo id: ${todoId}`)
     }
 
+    // NOTE only put this here if you are not allowed to see other user's data
     if (todo.creatorId != userId) {
-      throw new Forbidden("You cannot access another user's todo")
+      throw new Forbidden("You cannot access another user's todo, friend")
     }
 
     return todo
