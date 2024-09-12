@@ -24,6 +24,7 @@ export class ImagesController extends BaseController {
     try {
       const imageData = request.body
       const user = request.userInfo
+      // REVIEW never trust the client, always assign ownership with userInfo from bearer token
       imageData.authorId = user.id
       const image = await imagesService.createImage(imageData)
       response.send(image)

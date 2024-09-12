@@ -19,6 +19,7 @@ export class TodosController extends BaseController {
     try {
       const todoData = request.body
       const user = request.userInfo
+      // REVIEW never trust the client, always assign ownership with userInfo from bearer token
       todoData.creatorId = user.id
       const todo = await todosService.createTodo(todoData)
       response.send(todo)
